@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostGrid from '../../components/PostGrid.astro';
+import { CATEGORIES } from '../../data/categories';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('posts');
+	return CATEGORIES.map((category) => ({
+		params: { category: category.slug },
+		props: {
+			category,
+			posts: posts
+				.filter((post) => post.data.categories.includes(category.name))
+				.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+		},
+	}));
+}
+
+const { category, posts } = Astro.props;
+---
+
+<BaseLayout
+	title={`${category.name} - TV EL`}
+	description={`Artikel aus der Kategorie ${category.name} auf TV EL.`}
+>
+	<div class="page wide">
+		<p class="kicker">Kategorie</p>
+		<h1>{category.name}</h1>
+		{posts.length === 0 && <p class="empty">Noch keine Artikel in dieser Kategorie.</p>}
+		<PostGrid posts={posts} />
+	</div>
+</BaseLayout>
+
+<style>
+	.page.wide {
+		max-width: 920px;
+	}
+
+	.kicker {
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.15em;
+		text-transform: uppercase;
+		color: var(--accent);
+		margin: 0 0 0.5rem;
+	}
+
+	h1 {
+		font-family: var(--font-display);
+		font-weight: 400;
+		text-transform: uppercase;
+		letter-spacing: 0.01em;
+		font-size: clamp(2rem, 5vw, 3rem);
+		margin: 0 0 2.5rem;
+	}
+
+	.empty {
+		color: var(--muted);
+	}
+</style>

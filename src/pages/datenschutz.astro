@@ -1,0 +1,25 @@
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const entry = await getEntry('legal', 'datenschutz');
+const { Content } = await render(entry);
+---
+
+<BaseLayout title={`${entry.data.title} - TV EL`}>
+	<div class="page">
+		<article>
+			<h1>{entry.data.title}</h1>
+			<div class="content">
+				<Content />
+			</div>
+		</article>
+		<p class="back"><a href="/">&larr; Zurück zur Übersicht</a></p>
+	</div>
+</BaseLayout>
+
+<style>
+	.back {
+		margin-top: 3rem;
+	}
+</style>

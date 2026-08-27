@@ -1,0 +1,96 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	posts: CollectionEntry<'posts'>[];
+}
+
+const { posts } = Astro.props;
+---
+
+<ul class="post-grid">
+	{
+		posts.map((post) => (
+			<li>
+				<a href={`/${post.id}/`}>
+					<span class="tag">{post.data.category}</span>
+					<h3>{post.data.title}</h3>
+					<p class="excerpt">{post.data.description}</p>
+					<p class="meta">
+						{post.data.pubDate.toLocaleDateString('de-DE', {
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric',
+						})}
+					</p>
+				</a>
+			</li>
+		))
+	}
+</ul>
+
+<style>
+	.post-grid {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1.5rem;
+	}
+
+	.post-grid a {
+		display: block;
+		height: 100%;
+		text-decoration: none;
+		color: var(--fg);
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 14px;
+		padding: 1.5rem;
+		transition: border-color 0.15s ease, transform 0.15s ease;
+	}
+
+	.post-grid a:hover {
+		border-color: var(--accent);
+		transform: translateY(-2px);
+	}
+
+	.tag {
+		display: inline-block;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--accent);
+		margin-bottom: 0.75rem;
+	}
+
+	.post-grid h3 {
+		margin: 0 0 0.6rem;
+		font-size: 1.1rem;
+		line-height: 1.35;
+	}
+
+	.post-grid a:hover h3 {
+		color: var(--accent);
+	}
+
+	.excerpt {
+		margin: 0 0 1rem;
+		color: var(--muted);
+		font-size: 0.92rem;
+	}
+
+	.meta {
+		margin: 0;
+		font-size: 0.78rem;
+		color: var(--muted);
+	}
+
+	@media (max-width: 680px) {
+		.post-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

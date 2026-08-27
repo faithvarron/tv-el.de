@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostGrid from '../components/PostGrid.astro';
+
+const AUTHOR_NAME = 'Roy';
+
+const posts = (await getCollection('posts'))
+	.filter((post) => post.data.author === AUTHOR_NAME)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+	title={`${AUTHOR_NAME} - TV EL`}
+	description={`Alle Artikel von ${AUTHOR_NAME} auf TV EL.`}
+>
+	<div class="page wide">
+		<p class="kicker">Autor</p>
+		<h1>{AUTHOR_NAME}</h1>
+		<p class="count">{posts.length} Artikel</p>
+		<PostGrid posts={posts} />
+	</div>
+</BaseLayout>
+
+<style>
+	.page.wide {
+		max-width: 920px;
+	}
+
+	.kicker {
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.15em;
+		text-transform: uppercase;
+		color: var(--accent);
+		margin: 0 0 0.5rem;
+	}
+
+	h1 {
+		font-family: var(--font-display);
+		font-weight: 400;
+		text-transform: uppercase;
+		letter-spacing: 0.01em;
+		font-size: clamp(2rem, 5vw, 3rem);
+		margin: 0 0 0.5rem;
+	}
+
+	.count {
+		color: var(--muted);
+		margin: 0 0 2.5rem;
+	}
+</style>

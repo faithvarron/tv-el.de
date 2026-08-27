@@ -1,0 +1,304 @@
+---
+import { CATEGORIES } from '../data/categories';
+import Logo from '../components/Logo.astro';
+
+interface Props {
+	title: string;
+	description?: string;
+	fullBleedHeader?: boolean;
+}
+
+const { title, description, fullBleedHeader = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="alternate icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		{description && <meta name="description" content={description} />}
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body>
+		<header class:list={["site-header", { "site-header--overlay": fullBleedHeader }]}>
+			<a class="logo-link" href="/" aria-label="TV EL – Startseite">
+				<Logo />
+			</a>
+			<nav class="nav-inline">
+				<a href="/">Start</a>
+				{CATEGORIES.map((category) => (
+					<a href={`/thema/${category.slug}/`}>{category.name}</a>
+				))}
+			</nav>
+			<details class="nav-toggle">
+				<summary class="nav-toggle-btn" aria-label="Menü öffnen">
+					<span></span><span></span><span></span>
+				</summary>
+				<nav class="nav-panel">
+					<a href="/">Start</a>
+					{CATEGORIES.map((category) => (
+						<a href={`/thema/${category.slug}/`}>{category.name}</a>
+					))}
+				</nav>
+			</details>
+		</header>
+		<main>
+			<slot />
+		</main>
+		<footer class="site-footer">
+			<nav class="footer-nav">
+				<a href="/impressum/">Impressum</a>
+				<a href="/datenschutz/">Datenschutz</a>
+			</nav>
+			<p>&copy; {new Date().getFullYear()} TV EL</p>
+		</footer>
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		color-scheme: light dark;
+		--fg: #17130f;
+		--bg: #fffdfb;
+		--muted: #6b6259;
+		--border: #e7ded4;
+		--accent: #e0562b;
+		--accent-2: #ffb238;
+		--surface: #f7f1ea;
+		--font-display: "Bebas Neue", "Arial Narrow", sans-serif;
+		--font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:root {
+			--fg: #f3ede6;
+			--bg: #100d0b;
+			--muted: #a89c8f;
+			--border: #2c2621;
+			--accent: #ff7a45;
+			--accent-2: #ffc670;
+			--surface: #1c1713;
+		}
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	body {
+		margin: 0;
+		background: var(--bg);
+		color: var(--fg);
+		font-family: var(--font-body);
+		line-height: 1.65;
+	}
+
+	.site-header {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 1.5rem;
+		max-width: 1100px;
+		margin: 0 auto;
+		padding: 1.75rem 1.25rem;
+	}
+
+	.site-header:not(.site-header--overlay) {
+		border-bottom: 1px solid var(--border);
+	}
+
+	.site-header--overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 2;
+		color: #fff5ec;
+	}
+
+	.logo-link {
+		flex: none;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.nav-inline {
+		display: flex;
+		align-items: center;
+		gap: 1.5rem;
+		min-width: 0;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.nav-inline::-webkit-scrollbar {
+		display: none;
+	}
+
+	.nav-inline a,
+	.nav-panel a {
+		flex: none;
+		color: var(--muted);
+		text-decoration: none;
+		font-size: 0.76rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		white-space: nowrap;
+	}
+
+	.site-header--overlay .nav-inline a {
+		color: rgb(255 245 236 / 75%);
+	}
+
+	.nav-inline a:hover,
+	.nav-panel a:hover {
+		color: var(--accent);
+	}
+
+	.site-header--overlay .nav-inline a:hover {
+		color: var(--accent-2);
+	}
+
+	.nav-toggle {
+		display: none;
+	}
+
+	.nav-toggle-btn {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 5px;
+		width: 2.25rem;
+		height: 2.25rem;
+		cursor: pointer;
+		list-style: none;
+	}
+
+	.nav-toggle-btn::-webkit-details-marker {
+		display: none;
+	}
+
+	.nav-toggle-btn span {
+		display: block;
+		width: 100%;
+		height: 2px;
+		background: currentColor;
+		color: inherit;
+	}
+
+	.nav-panel {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		z-index: 50;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		background: var(--bg);
+		box-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+		border-top: 1px solid var(--border);
+		border-bottom: 1px solid var(--border);
+		padding: 1rem 1.25rem 1.5rem;
+	}
+
+	.nav-panel a {
+		color: var(--fg);
+		padding: 0.6rem 0;
+	}
+
+	@media (max-width: 860px) {
+		.nav-inline {
+			display: none;
+		}
+
+		.nav-toggle {
+			display: block;
+			margin-left: auto;
+			color: inherit;
+		}
+	}
+
+	.page {
+		max-width: 760px;
+		margin: 0 auto;
+		padding: 2rem 1.25rem 4rem;
+	}
+
+	.site-footer {
+		text-align: center;
+		color: var(--muted);
+		font-size: 0.85rem;
+		padding: 2rem 1.25rem 3rem;
+	}
+
+	.footer-nav {
+		display: flex;
+		justify-content: center;
+		gap: 1.5rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.footer-nav a {
+		color: var(--muted);
+		text-decoration: none;
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	.footer-nav a:hover {
+		color: var(--accent);
+	}
+
+	a {
+		color: var(--accent);
+	}
+
+	h1,
+	h2,
+	h3 {
+		line-height: 1.25;
+	}
+
+	blockquote {
+		margin: 1.5rem 0;
+		padding: 0.25rem 1.25rem;
+		border-left: 3px solid var(--accent);
+		color: var(--muted);
+	}
+
+	table {
+		display: block;
+		width: 100%;
+		max-width: 100%;
+		overflow-x: auto;
+		border-collapse: collapse;
+		margin: 1.5rem 0;
+	}
+
+	th,
+	td {
+		border: 1px solid var(--border);
+		padding: 0.5rem 0.75rem;
+		text-align: left;
+		white-space: nowrap;
+	}
+
+	img,
+	svg {
+		max-width: 100%;
+		height: auto;
+	}
+</style>

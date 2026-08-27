@@ -1,0 +1,102 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('posts');
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: { post },
+	}));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={`${post.data.title} - TV EL`} description={post.data.description}>
+	<div class="page">
+		<article>
+			<span class="tag">{post.data.category}</span>
+			<h1>{post.data.title}</h1>
+			<p class="meta">
+				{post.data.pubDate.toLocaleDateString('de-DE', {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric',
+				})}
+				{post.data.author && (
+					<>
+						{' '}
+						· <a class="author-link" href="/autor/">{post.data.author}</a>
+					</>
+				)}
+			</p>
+			<div class="content">
+				<Content />
+			</div>
+		</article>
+		<p class="back"><a href="/">&larr; Zurück zur Übersicht</a></p>
+	</div>
+</BaseLayout>
+
+<style>
+	.tag {
+		display: inline-block;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--accent);
+		margin-bottom: 0.75rem;
+	}
+
+	article h1 {
+		font-family: var(--font-display);
+		font-weight: 400;
+		text-transform: uppercase;
+		letter-spacing: 0.01em;
+		font-size: clamp(1.9rem, 4.5vw, 2.75rem);
+		line-height: 1.05;
+		margin: 0 0 0.75rem;
+	}
+
+	.meta {
+		color: var(--muted);
+		font-size: 0.85rem;
+		margin-top: 0;
+		margin-bottom: 2.5rem;
+		padding-bottom: 2rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.meta .author-link {
+		color: var(--muted);
+	}
+
+	.meta .author-link:hover {
+		color: var(--accent);
+	}
+
+	.content :global(h2) {
+		font-family: var(--font-display);
+		font-weight: 400;
+		text-transform: uppercase;
+		letter-spacing: 0.01em;
+		font-size: 1.5rem;
+		margin-top: 2.75rem;
+	}
+
+	.content :global(h3) {
+		margin-top: 1.75rem;
+	}
+
+	.content :global(ul),
+	.content :global(ol) {
+		padding-left: 1.25rem;
+	}
+
+	.back {
+		margin-top: 3rem;
+	}
+</style>
